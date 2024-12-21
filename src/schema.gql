@@ -1,0 +1,115 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Bank {
+  id: Int!
+  name: String!
+  userId: Int!
+  userBankPhone: String
+  bankCode: String
+  userDniBank: String
+  binancePayId: String
+  user: User!
+}
+
+type User {
+  id: Int!
+  name: String!
+  email: String!
+  crdBalance: Float
+  usdBalance: Float
+  games: [Game!]
+  banks: [Bank!]
+}
+
+type Game {
+  id: Int!
+  name: String!
+  avatar: String
+  userId: Int!
+  gameUserId: String
+  nickname: String
+  user: [User!]!
+}
+
+type Room {
+  id: Int!
+  gameId: Int!
+  roomId: String!
+  roomPassword: String!
+  playersNum: Int!
+  mode: String!
+  time: String!
+  date: String!
+  usersId: [Int!]
+}
+
+type Query {
+  games: [Game!]!
+  game(id: Int!): Game!
+  users: [User!]!
+  user(id: Int!): User!
+  banks: [Bank!]!
+  bank(id: Int!): Bank!
+  rooms: [Room!]!
+  room(id: Int!): Room!
+}
+
+type Mutation {
+  createGame(createGameInput: CreateGameInput!): Game!
+  assignGameToUser(assignGameInput: AssignGameInput!): Game!
+  createUser(createUserInput: CreateUserInput!): User!
+  createBank(createBankInput: CreateBankInput!): Bank!
+  assingBankToUser(assignBankInput: AssignBankInput!): Bank!
+  createRoom(createRoomInput: CreateRoomInput!): Room!
+  addUserToRoom(roomId: String!, userId: Int!): Room!
+}
+
+input CreateGameInput {
+  name: String!
+  avatar: String!
+  gameUserId: String
+  nickname: String
+}
+
+input AssignGameInput {
+  gameId: Int!
+  userId: Int!
+  gameUserId: String
+  nickname: String
+}
+
+input CreateUserInput {
+  name: String!
+  email: String!
+  crdBalance: Float
+  usdBalance: Float
+}
+
+input CreateBankInput {
+  name: String!
+  userBankPhone: String
+  bankCode: String
+  userDniBank: String
+  binancePayId: String
+}
+
+input AssignBankInput {
+  bankId: Float!
+  userId: Float!
+  binancePayId: String
+  bankCode: String
+  userBankPhone: String
+  userDniBank: String
+}
+
+input CreateRoomInput {
+  gameId: Int!
+  roomId: String!
+  roomPassword: String!
+  playersNum: Int!
+  mode: String!
+  time: String!
+  date: String!
+}
