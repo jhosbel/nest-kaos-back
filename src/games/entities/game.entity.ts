@@ -1,7 +1,8 @@
 /* eslint-disable prettier/prettier */
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, ManyToMany,/*  OneToMany, */ PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToMany,OneToOne,/*  OneToMany, */ PrimaryGeneratedColumn } from 'typeorm';
+import { UserGame } from './userGame.entity';
 
 @Entity()
 @ObjectType()
@@ -18,19 +19,13 @@ export class Game {
   @Field({ nullable: true })
   avatar?: string;
 
-  @Column({nullable: true})
-  @Field(() => Int)
-  userId?: number;
-
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  gameUserId?: string; // ID del usuario dentro del juego
-
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  nickname?: string; // Nickname dentro del juego
-
   @ManyToMany(() => User, (user) => user.games)
   @Field(() => [User])
   user?: User[];
+
+  @OneToOne(() => UserGame)
+  @JoinColumn()
+  @Field({ nullable: true })
+  userGameDetail?: UserGame
+
 }

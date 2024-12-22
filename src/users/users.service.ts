@@ -19,7 +19,7 @@ export class UsersService {
 
   findAll(): Promise<User[]> {
     return this.userRepository.find({
-      relations: ['games', 'banks']
+      relations: ['games', 'games.userGameDetail', 'banks']
     });
   }
 

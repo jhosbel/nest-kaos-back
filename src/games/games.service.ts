@@ -4,8 +4,10 @@ import { Game } from './entities/game.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateGameInput } from './dto/create-game.input';
-import { AssignGameInput } from './dto/addUser-game.input';
+//import { AssignGameInput } from './dto/addUser-game.input';
 import { User } from 'src/users/entities/user.entity';
+import { UserGame } from './entities/userGame.entity';
+import { UserGameDetailsInput } from './dto/userGameDetails-game.input';
 //import { UpdateGameInput } from './dto/update-game.input';
 
 @Injectable()
@@ -13,6 +15,8 @@ export class GamesService {
   constructor(
     @InjectRepository(Game) private gameRepository: Repository<Game>,
     @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(UserGame)
+    private userGameRepository: Repository<UserGame>,
   ) {}
 
   async create(game: CreateGameInput): Promise<Game> {
@@ -20,8 +24,8 @@ export class GamesService {
     return this.gameRepository.save(newGame);
   }
 
-  async assignGameToUser(assignGameInput: AssignGameInput): Promise<Game> {
-    const { gameId, userId, gameUserId, nickname } = assignGameInput;
+  async assignGameToUser(userGameDetail: UserGameDetailsInput): Promise<Game> {
+    const { gameUserId, nickname, gameId, userId } = userGameDetail;
   
     // Buscar al usuario
     const user = await this.userRepository.findOne({
@@ -34,40 +38,44 @@ export class GamesService {
     }
   
     // Buscar el juego
-    const game = await this.gameRepository.findOneBy({ id: gameId });
+    const game = await this.gameRepository.findOne({
+      where: { id: gameId },
+      relations: ['userGameDetail'], // Asegúrate de cargar la relación
+    });
+  
     if (!game) {
       throw new Error('Game not found');
     }
   
-    // Verificar si el juego ya está asignado al usuario
+    // Crear el detalle de UserGame
+    const newUserGame = this.userGameRepository.create({
+      userId,
+      gameId,
+      gameUserId,
+      nickname,
+    });
+  
+    // Guardar el detalle de UserGame
+    const savedUserGame = await this.userGameRepository.save(newUserGame);
+  
+    // Establecer la relación en el juego
+    game.userGameDetail = savedUserGame;
+  
+    // Guardar el juego con la relación actualizada
+    await this.gameRepository.save(game);
+  
+    // Asignar el juego al usuario si no está asignado
     const existingGame = user.games.find((g) => g.id === game.id);
     if (!existingGame) {
-      // Asignar el juego al usuario
       user.games.push(game);
-  
-      // Asignar valores adicionales si están presentes
-      if (gameUserId) {
-        game.gameUserId = gameUserId;
-      }
-      if (nickname) {
-        game.nickname = nickname;
-      }
-  
-      // Asignar el userId al juego
-      game.userId = userId;
-  
-      // Guardar la relación entre el juego y el usuario
       await this.userRepository.save(user);
     }
   
-    // Guardar el juego después de asignarlo al usuario
-    await this.gameRepository.save(game);
-  
-    return game; // Devolver el juego con el userId asignado
+    return game;
   }
 
   findAll(): Promise<Game[]> {
-    return this.gameRepository.find({ relations: ['user'] });
+    return this.gameRepository.find({ relations: ['userGameDetail', 'user'] });
   }
 
   async findOneById(id: number): Promise<Game> {
@@ -75,6 +83,7 @@ export class GamesService {
       where: {
         id,
       },
+      relations: ['userGameDetail', 'user'],
     });
   }
 

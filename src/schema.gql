@@ -23,14 +23,21 @@ type User {
   banks: [Bank!]
 }
 
+type UserGame {
+  id: Int!
+  userId: Int!
+  gameId: Int!
+  gameUserId: String!
+  nickname: String!
+  game: Game!
+}
+
 type Game {
   id: Int!
   name: String!
   avatar: String
-  userId: Int!
-  gameUserId: String
-  nickname: String
   user: [User!]!
+  userGameDetail: UserGame
 }
 
 type Room {
@@ -58,7 +65,7 @@ type Query {
 
 type Mutation {
   createGame(createGameInput: CreateGameInput!): Game!
-  assignGameToUser(assignGameInput: AssignGameInput!): Game!
+  assignGameToUser(userGameDetails: UserGameDetailsInput!): Game!
   createUser(createUserInput: CreateUserInput!): User!
   createBank(createBankInput: CreateBankInput!): Bank!
   assingBankToUser(assignBankInput: AssignBankInput!): Bank!
@@ -69,15 +76,13 @@ type Mutation {
 input CreateGameInput {
   name: String!
   avatar: String!
-  gameUserId: String
-  nickname: String
 }
 
-input AssignGameInput {
+input UserGameDetailsInput {
   gameId: Int!
   userId: Int!
-  gameUserId: String
   nickname: String
+  gameUserId: String
 }
 
 input CreateUserInput {

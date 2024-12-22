@@ -14,9 +14,9 @@ export class CreateGameInput {
   @Field()
   avatar: string;
 
-  @Field({ nullable: true })
+  /* @Field({ nullable: true })
   gameUserId?: string;
 
   @Field({ nullable: true })
-  nickname?: string;
+  nickname?: string; */
 }

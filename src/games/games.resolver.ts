@@ -3,7 +3,8 @@ import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { GamesService } from './games.service';
 import { Game } from './entities/game.entity';
 import { CreateGameInput } from './dto/create-game.input';
-import { AssignGameInput } from './dto/addUser-game.input';
+//import { AssignGameInput } from './dto/addUser-game.input';
+import { UserGameDetailsInput } from './dto/userGameDetails-game.input';
 //import { UpdateGameInput } from './dto/update-game.input';
 
 @Resolver(() => Game)
@@ -16,8 +17,8 @@ export class GamesResolver {
   }
 
   @Mutation(() => Game)
-  assignGameToUser(@Args('assignGameInput') assignGameInput: AssignGameInput) {
-    return this.gamesService.assignGameToUser(assignGameInput);
+  assignGameToUser(@Args('userGameDetails') userGameDetails: UserGameDetailsInput) {
+    return this.gamesService.assignGameToUser( userGameDetails);
   }
 
   @Query(() => [Game], { name: 'games' })
