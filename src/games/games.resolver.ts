@@ -4,7 +4,7 @@ import { GamesService } from './games.service';
 import { Game } from './entities/game.entity';
 import { CreateGameInput } from './dto/create-game.input';
 //import { AssignGameInput } from './dto/addUser-game.input';
-import { UserGameDetailsInput } from './dto/userGameDetails-game.input';
+//import { UserGameDetailsInput } from './dto/userGameDetails-game.input';
 //import { UpdateGameInput } from './dto/update-game.input';
 
 @Resolver(() => Game)
@@ -14,11 +14,6 @@ export class GamesResolver {
   @Mutation(() => Game)
   createGame(@Args('createGameInput') createGameInput: CreateGameInput) {
     return this.gamesService.create(createGameInput);
-  }
-
-  @Mutation(() => Game)
-  assignGameToUser(@Args('userGameDetails') userGameDetails: UserGameDetailsInput) {
-    return this.gamesService.assignGameToUser( userGameDetails);
   }
 
   @Query(() => [Game], { name: 'games' })
@@ -34,10 +29,10 @@ export class GamesResolver {
   /* @Mutation(() => Game)
   updateGame(@Args('updateGameInput') updateGameInput: UpdateGameInput) {
     return this.gamesService.update(updateGameInput.id, updateGameInput);
-  }
+  } */
 
   @Mutation(() => Game)
-  removeGame(@Args('id', { type: () => Int }) id: number) {
+  async removeGame(@Args('id', { type: () => Int }) id: number): Promise<Game> {
     return this.gamesService.remove(id);
-  } */
+  }
 }

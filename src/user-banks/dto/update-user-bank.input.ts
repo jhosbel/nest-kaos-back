@@ -1,9 +1,9 @@
 /* eslint-disable prettier/prettier */
-import { CreateBankInput } from './create-bank.input';
+import { CreateUserBankInput } from './create-user-bank.input';
 import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
 
 @InputType()
-export class UpdateBankInput extends PartialType(CreateBankInput) {
+export class UpdateUserBankInput extends PartialType(CreateUserBankInput) {
   @Field(() => Int)
   id: number;
 }

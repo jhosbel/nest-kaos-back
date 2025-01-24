@@ -9,6 +9,12 @@ export class CreateUserInput {
   @Field()
   email: string;
 
+  @Field()
+  password: string;
+
+  @Field({ nullable: true })
+  phone?: string;
+
   @Field({ nullable: true })
   crdBalance?: number;
 

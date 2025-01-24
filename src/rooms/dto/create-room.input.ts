@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { InputType, Int, Field } from '@nestjs/graphql';
+import { RoomStatus } from '../enums/room-status.enum';
 
 @InputType()
 export class CreateRoomInput {
@@ -7,7 +8,10 @@ export class CreateRoomInput {
   gameId: number;
 
   @Field()
-  roomId: string;
+  gameName: string;
+
+  @Field()
+  roomGameId: string;
 
   @Field()
   roomPassword: string;
@@ -23,4 +27,7 @@ export class CreateRoomInput {
 
   @Field()
   date: string;
+
+  @Field(() => RoomStatus, { defaultValue: RoomStatus.NEW })
+  status?: RoomStatus;
 }

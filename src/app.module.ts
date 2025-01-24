@@ -8,6 +8,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { BanksModule } from './banks/banks.module';
 import { RoomsModule } from './rooms/rooms.module';
+import { UserGamesModule } from './user-games/user-games.module';
+import { UserBanksModule } from './user-banks/user-banks.module';
+import { AuthModule } from './auth/auth.module';
+import { CreateUserGameInput } from './user-games/dto/create-user-game.input';
 
 @Module({
   imports: [
@@ -25,8 +29,11 @@ import { RoomsModule } from './rooms/rooms.module';
     UsersModule,
     BanksModule,
     RoomsModule,
+    UserGamesModule,
+    UserBanksModule,
+    AuthModule
   ],
   controllers: [],
-  providers: [],
+  providers: [CreateUserGameInput],
 })
 export class AppModule {}

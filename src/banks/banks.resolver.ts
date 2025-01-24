@@ -3,7 +3,7 @@ import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { BanksService } from './banks.service';
 import { Bank } from './entities/bank.entity';
 import { CreateBankInput } from './dto/create-bank.input';
-import { AssignBankInput } from './dto/addUser-bank.input';
+//import { AssignBankInput } from './dto/addUser-bank.input';
 //import { UpdateBankInput } from './dto/update-bank.input';
 
 @Resolver(() => Bank)
@@ -12,13 +12,13 @@ export class BanksResolver {
 
   @Mutation(() => Bank)
   createBank(@Args('createBankInput') createBankInput: CreateBankInput) {
-    return this.banksService.create(createBankInput);
+    return this.banksService.createBank(createBankInput);
   }
 
-  @Mutation(() => Bank)
+  /* @Mutation(() => Bank)
   assingBankToUser(@Args('assignBankInput') assignGameInput: AssignBankInput) {
     return this.banksService.assignBankToUser(assignGameInput);
-  }
+  } */
 
   @Query(() => [Bank], { name: 'banks' })
   findAll() {

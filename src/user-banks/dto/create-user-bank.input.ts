@@ -1,14 +1,16 @@
 /* eslint-disable prettier/prettier */
-import { InputType, Field } from '@nestjs/graphql';
-import { MinLength } from 'class-validator';
+import { InputType, Field, Int } from '@nestjs/graphql';
 
 @InputType()
-export class CreateBankInput {
-  @MinLength(5, {
-    message: 'El titulo es demaciado corto',
-  })
-  @Field({ nullable: true })
-  name?: string;
+export class CreateUserBankInput {
+  @Field(() => Int)
+  userId?: number;
+
+  @Field(() => Int)
+  bankId?: number;
+
+  @Field()
+  bankName: string;
 
   @Field({ nullable: true })
   userBankPhone?: string;

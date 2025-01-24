@@ -1,8 +1,9 @@
 /* eslint-disable prettier/prettier */
 import { ObjectType, Field, Int, Float } from '@nestjs/graphql';
-import { Bank } from 'src/banks/entities/bank.entity';
-import { Game } from 'src/games/entities/game.entity';
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { UserBank } from 'src/user-banks/entities/user-bank.entity';
+import { UserGame } from 'src/user-games/entities/user-game.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Role } from '../enum/role';
 
 @Entity()
 @ObjectType()
@@ -15,9 +16,24 @@ export class User {
   @Field()
   name: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: false })
   @Field()
   email: string;
+
+  @Column({ nullable: true })
+  @Field()
+  password: string;
+
+  @Column({ nullable: true, default: "" })
+  @Field()
+  phone?: string;
+
+  @Column({
+    type: 'text',
+    default: Role.USER,
+  })
+  @Field()
+  rol: Role;
 
   @Column({ type: 'float', default: 0 })
   @Field(() => Float, { nullable: true })
@@ -27,13 +43,11 @@ export class User {
   @Field(() => Float, { nullable: true })
   usdBalance?: number;
 
-  @ManyToMany(() => Game, (game) => game.user)
-  @JoinTable()
-  @Field(() => [Game], { nullable: true })
-  games: Game[];
+  @OneToMany(() => UserGame, (userGame) => userGame.user)
+  @Field(() => [UserGame], { nullable: true })
+  userGameDetails?: UserGame[];
 
-  @ManyToMany(() => Bank, (bank) => bank.user)
-  @JoinTable()
-  @Field(() => [Bank], { nullable: true })
-  banks: Bank[];
+  @OneToMany(() => UserBank, (userBanks) => userBanks.user)
+  @Field(() => [UserBank], { nullable: true })
+  banks?: UserBank[];
 }

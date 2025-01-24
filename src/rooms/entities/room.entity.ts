@@ -1,6 +1,13 @@
 /* eslint-disable prettier/prettier */
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field, Int, registerEnumType } from '@nestjs/graphql';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { RoomStatus } from '../enums/room-status.enum';
+import { IsEnum } from 'class-validator';
+import { UserStats } from './users-stats';
+
+registerEnumType(RoomStatus, {
+  name: 'RoomStatus',
+});
 
 @Entity()
 @ObjectType()
@@ -15,7 +22,11 @@ export class Room {
 
   @Column()
   @Field()
-  roomId: string;
+  gameName: string;
+
+  @Column()
+  @Field()
+  roomGameId: string;
 
   @Column()
   @Field()
@@ -40,4 +51,16 @@ export class Room {
   @Column('simple-array')
   @Field(() => [Int], { nullable: true })
   usersId?: number[];
+
+  @Column({
+    type: 'varchar',
+    default: 'new',
+  })
+  @IsEnum(RoomStatus)
+  @Field(() => String)
+  status: RoomStatus;
+
+  @Column('simple-json', { nullable: true })
+  @Field(() => [UserStats], { nullable: true })
+  userStats?: UserStats[];
 }

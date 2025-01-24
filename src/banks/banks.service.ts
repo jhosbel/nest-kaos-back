@@ -4,7 +4,6 @@ import { CreateBankInput } from './dto/create-bank.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Bank } from './entities/bank.entity';
 import { Repository } from 'typeorm';
-import { AssignBankInput } from './dto/addUser-bank.input';
 //import { UpdateBankInput } from './dto/update-bank.input';
 
 @Injectable()
@@ -13,34 +12,13 @@ export class BanksService {
     @InjectRepository(Bank) private bankRepository: Repository<Bank>,
   ) {}
 
-  create(createBankInput: CreateBankInput): Promise<Bank> {
+  async createBank(createBankInput: CreateBankInput): Promise<Bank> {
+    const existingBank = await this.bankRepository.findOne({
+      where: { name: createBankInput.name },
+    });
+    if (existingBank) throw new Error('Banco ya existe');
     const newBank = this.bankRepository.create(createBankInput);
     return this.bankRepository.save(newBank);
-  }
-
-  async assignBankToUser(assignGameInput: AssignBankInput): Promise<Bank> {
-    const { bankId, userId, bankCode, binancePayId, userBankPhone, userDniBank } = assignGameInput;
-
-    const bank = await this.bankRepository.findOneBy({ id: bankId });
-    if (!bank) {
-      throw new Error('Bank not found');
-    }
-
-    bank.userId = userId;
-    if (binancePayId) {
-      bank.binancePayId = binancePayId;
-    }
-    if (bankCode) {
-      bank.bankCode = bankCode;
-    }
-    if (userBankPhone) {
-      bank.userBankPhone = userBankPhone;
-    }
-    if (userDniBank) {
-      bank.userDniBank = userDniBank;
-    }
-
-    return this.bankRepository.save(bank);
   }
 
   findAllBanks(): Promise<Bank[]> {

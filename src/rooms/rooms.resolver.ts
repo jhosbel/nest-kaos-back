@@ -3,6 +3,7 @@ import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { RoomsService } from './rooms.service';
 import { Room } from './entities/room.entity';
 import { CreateRoomInput } from './dto/create-room.input';
+import { UpdateUserStatsInput } from './dto/update-user-stats-room.input';
 //import { UpdateRoomInput } from './dto/update-room.input';
 
 @Resolver(() => Room)
@@ -16,7 +17,7 @@ export class RoomsResolver {
 
   @Mutation(() => Room)
   addUserToRoom(
-    @Args('roomId') roomId: string,
+    @Args('roomId', { type: () => Int }) roomId: number,
     @Args('userId', { type: () => Int }) userId: number,
   ) {
     return this.roomsService.addUserToRoom(roomId, userId);
@@ -30,6 +31,20 @@ export class RoomsResolver {
   @Query(() => Room, { name: 'room' })
   findOne(@Args('id', { type: () => Int }) id: number) {
     return this.roomsService.findOneRoomById(id);
+  }
+
+  @Mutation(() => Room)
+  updateRoomStatusToFinished(@Args('id', { type: () => Int }) id: number) {
+    return this.roomsService.updateRoomStatusToFinished(id);
+  }
+
+  @Mutation(() => Room)
+  updateUserStats(
+    @Args('roomId', { type: () => Int }) roomId: number,
+    @Args('stats', { type: () => [UpdateUserStatsInput] })
+    stats: UpdateUserStatsInput[],
+  ) {
+    return this.roomsService.updateUserStats(roomId, stats);
   }
 
   /* @Mutation(() => Room)

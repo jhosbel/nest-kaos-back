@@ -2,16 +2,22 @@
 import { InputType, Field, Int } from '@nestjs/graphql';
 
 @InputType()
-export class AssignGameInput {
+export class CreateUserGameInput {
+  @Field({ nullable: true })
+  gameName?: string;
+
   @Field(() => Int)
   gameId?: number;
 
   @Field(() => Int)
   userId?: number;
 
-  /* @Field({ nullable: true })
+  @Field({ nullable: true })
+  nickname?: string;
+
+  @Field({ nullable: true })
   gameUserId?: string;
 
   @Field({ nullable: true })
-  nickname?: string; */
+  gameAvatar?: string;
 }

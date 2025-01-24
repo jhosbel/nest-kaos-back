@@ -2,10 +2,17 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Bank {
+type Game {
   id: Int!
   name: String!
+  avatar: String
+}
+
+type UserBank {
+  id: Int!
+  bankId: Int!
   userId: Int!
+  bankName: String!
   userBankPhone: String
   bankCode: String
   userDniBank: String
@@ -13,43 +20,55 @@ type Bank {
   user: User!
 }
 
-type User {
-  id: Int!
-  name: String!
-  email: String!
-  crdBalance: Float
-  usdBalance: Float
-  games: [Game!]
-  banks: [Bank!]
-}
-
 type UserGame {
   id: Int!
+  gameName: String!
   userId: Int!
   gameId: Int!
   gameUserId: String!
   nickname: String!
-  game: Game!
+  gameAvatar: String!
+  user: User!
 }
 
-type Game {
+type User {
   id: Int!
   name: String!
-  avatar: String
-  user: [User!]!
-  userGameDetail: UserGame
+  email: String!
+  password: String!
+  phone: String!
+  rol: String!
+  crdBalance: Float
+  usdBalance: Float
+  userGameDetails: [UserGame!]
+  banks: [UserBank!]
+}
+
+type Bank {
+  id: Int!
+  name: String!
+}
+
+type UserStats {
+  userId: Int!
+  kills: Int
+  timePlayed: String
+  position: Int
 }
 
 type Room {
   id: Int!
   gameId: Int!
-  roomId: String!
+  gameName: String!
+  roomGameId: String!
   roomPassword: String!
   playersNum: Int!
   mode: String!
   time: String!
   date: String!
   usersId: [Int!]
+  status: String!
+  userStats: [UserStats!]
 }
 
 type Query {
@@ -57,20 +76,34 @@ type Query {
   game(id: Int!): Game!
   users: [User!]!
   user(id: Int!): User!
+  userOneGame(id: Int!): User!
+  userByEmail(email: String!): User!
   banks: [Bank!]!
   bank(id: Int!): Bank!
   rooms: [Room!]!
   room(id: Int!): Room!
+  userGames: [UserGame!]!
+  userGame(id: Int!): UserGame!
+  userGameDetails(userId: Int!): [UserGame!]!
+  userBanks: [UserBank!]!
+  userBank(id: Int!): UserBank!
 }
 
 type Mutation {
   createGame(createGameInput: CreateGameInput!): Game!
-  assignGameToUser(userGameDetails: UserGameDetailsInput!): Game!
+  removeGame(id: Int!): Game!
   createUser(createUserInput: CreateUserInput!): User!
+  updateUserRole(id: Int!, newRole: String!): User!
+  updateUser(updateUserInput: UpdateUserInput!): User!
+  removeUser(id: Int!): User!
   createBank(createBankInput: CreateBankInput!): Bank!
-  assingBankToUser(assignBankInput: AssignBankInput!): Bank!
   createRoom(createRoomInput: CreateRoomInput!): Room!
-  addUserToRoom(roomId: String!, userId: Int!): Room!
+  addUserToRoom(roomId: Int!, userId: Int!): Room!
+  updateRoomStatusToFinished(id: Int!): Room!
+  updateUserStats(roomId: Int!, stats: [UpdateUserStatsInput!]!): Room!
+  assingGameToUser(assingGameToUserInput: CreateUserGameInput!): UserGame!
+  removeUserGame(userId: Int!, gameId: Int!): UserGame!
+  assignBankToUser(assignBankToUser: CreateUserBankInput!): UserBank!
 }
 
 input CreateGameInput {
@@ -78,43 +111,73 @@ input CreateGameInput {
   avatar: String!
 }
 
-input UserGameDetailsInput {
-  gameId: Int!
-  userId: Int!
-  nickname: String
-  gameUserId: String
-}
-
 input CreateUserInput {
   name: String!
   email: String!
+  password: String!
+  phone: String
   crdBalance: Float
   usdBalance: Float
 }
 
-input CreateBankInput {
-  name: String!
-  userBankPhone: String
-  bankCode: String
-  userDniBank: String
-  binancePayId: String
+input UpdateUserInput {
+  name: String
+  email: String
+  password: String
+  phone: String
+  crdBalance: Float
+  usdBalance: Float
+  id: Int!
 }
 
-input AssignBankInput {
-  bankId: Float!
-  userId: Float!
-  binancePayId: String
-  bankCode: String
+input CreateBankInput {
+  name: String
   userBankPhone: String
+  bankCode: String
   userDniBank: String
+  binancePayId: String
 }
 
 input CreateRoomInput {
   gameId: Int!
-  roomId: String!
+  gameName: String!
+  roomGameId: String!
   roomPassword: String!
   playersNum: Int!
   mode: String!
   time: String!
   date: String!
+  status: RoomStatus! = NEW
+}
+
+enum RoomStatus {
+  NEW
+  STARTED
+  FINISHED
+}
+
+input UpdateUserStatsInput {
+  userId: Int!
+  kills: Int
+  timePlayed: String
+  position: Int
+}
+
+input CreateUserGameInput {
+  gameName: String
+  gameId: Int!
+  userId: Int!
+  nickname: String
+  gameUserId: String
+  gameAvatar: String
+}
+
+input CreateUserBankInput {
+  userId: Int!
+  bankId: Int!
+  bankName: String!
+  userBankPhone: String
+  bankCode: String
+  userDniBank: String
+  binancePayId: String
 }

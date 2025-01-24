@@ -1,10 +1,12 @@
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { CreateUserInput } from './dto/create-user.input';
-//import { UpdateUserInput } from './dto/update-user.input';
+import { UpdateUserInput } from './dto/update-user.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import { UserGame } from 'src/user-games/entities/user-game.entity';
+import { Role } from './enum/role';
 
 @Injectable()
 export class UsersService {
@@ -19,7 +21,7 @@ export class UsersService {
 
   findAll(): Promise<User[]> {
     return this.userRepository.find({
-      relations: ['games', 'games.userGameDetail', 'banks']
+      relations: ['userGameDetails', 'banks'],
     });
   }
 
@@ -28,15 +30,48 @@ export class UsersService {
       where: {
         id,
       },
-      relations: ['games', 'banks'],
+      relations: ['userGameDetails', 'banks'],
     });
   }
 
-  /* update(id: number, updateUserInput: UpdateUserInput) {
-    return `This action updates a #${id} user`;
+  findOneByEmail(email: string): Promise<User> {
+    return this.userRepository.findOne({
+      where: { email },
+      relations: ['userGameDetails', 'banks'],
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  } */
+  async findOneUserGames(id: number): Promise<UserGame[]> {
+    const user = await this.userRepository.findOne({
+      where: {
+        id,
+      },
+      relations: ['userGameDetails'],
+    });
+    return user.userGameDetails;
+  }
+
+  async updateUserRole(id: number, newRole: Role): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new Error('User not found');
+    }
+    user.rol = newRole;
+    return this.userRepository.save(user);
+  }
+
+  async update(id: number, updateUserInput: UpdateUserInput): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new Error('User not found');
+    }
+    const updateUser = Object.assign(user, updateUserInput);
+    return this.userRepository.save(updateUser);
+  }
+
+  async removeUser(id: number): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) throw new Error('User not found');
+    return this.userRepository.remove(user);
+  }
 }

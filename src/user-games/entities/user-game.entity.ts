@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Game } from './game.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from 'src/users/entities/user.entity';
 
 @Entity()
 @ObjectType()
@@ -11,12 +11,16 @@ export class UserGame {
   id: number;
 
   @Column()
-  @Field(() => Int)
-  userId: number
+  @Field()
+  gameName: string;
 
   @Column()
   @Field(() => Int)
-  gameId: number
+  userId: number;
+
+  @Column()
+  @Field(() => Int)
+  gameId: number;
 
   @Column()
   @Field()
@@ -26,7 +30,12 @@ export class UserGame {
   @Field()
   nickname: string;
 
-  @OneToOne(() => Game, (game) => game.id)
-  @Field(() => Game)
-  game: Game;
+  @Column()
+  @Field()
+  gameAvatar: string;
+
+  @ManyToOne(() => User, (user) => user.userGameDetails)
+  @Field(() => User)
+  user: User;
 }
+
