@@ -10,7 +10,9 @@ export class UserBanksResolver {
   constructor(private readonly userBanksService: UserBanksService) {}
 
   @Mutation(() => UserBank)
-  assignBankToUser(@Args('assignBankToUser') createUserBankInput: CreateUserBankInput) {
+  assignBankToUser(
+    @Args('assignBankToUser') createUserBankInput: CreateUserBankInput,
+  ) {
     return this.userBanksService.assignBankToUser(createUserBankInput);
   }
 
@@ -27,10 +29,13 @@ export class UserBanksResolver {
   /* @Mutation(() => UserBank)
   updateUserBank(@Args('updateUserBankInput') updateUserBankInput: UpdateUserBankInput) {
     return this.userBanksService.update(updateUserBankInput.id, updateUserBankInput);
-  }
+  } */
 
   @Mutation(() => UserBank)
-  removeUserBank(@Args('id', { type: () => Int }) id: number) {
-    return this.userBanksService.remove(id);
-  } */
+  removeUserBank(
+    @Args('userId', { type: () => Int }) userId: number,
+    @Args('bankId', { type: () => Int }) bankId: number,
+  ) {
+    return this.userBanksService.removeUserBank(userId, bankId);
+  }
 }

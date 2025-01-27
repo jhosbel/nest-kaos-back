@@ -12,6 +12,7 @@ import { UserGamesModule } from './user-games/user-games.module';
 import { UserBanksModule } from './user-banks/user-banks.module';
 import { AuthModule } from './auth/auth.module';
 import { CreateUserGameInput } from './user-games/dto/create-user-game.input';
+import { UserDepositModule } from './users-deposits/user-deposit.module';
 
 @Module({
   imports: [
@@ -31,7 +32,8 @@ import { CreateUserGameInput } from './user-games/dto/create-user-game.input';
     RoomsModule,
     UserGamesModule,
     UserBanksModule,
-    AuthModule
+    AuthModule,
+    UserDepositModule
   ],
   controllers: [],
   providers: [CreateUserGameInput],

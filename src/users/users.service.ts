@@ -21,7 +21,7 @@ export class UsersService {
 
   findAll(): Promise<User[]> {
     return this.userRepository.find({
-      relations: ['userGameDetails', 'banks'],
+      relations: ['userGameDetails', 'banks', 'deposits'],
     });
   }
 
@@ -30,14 +30,14 @@ export class UsersService {
       where: {
         id,
       },
-      relations: ['userGameDetails', 'banks'],
+      relations: ['userGameDetails', 'banks', 'deposits'],
     });
   }
 
   findOneByEmail(email: string): Promise<User> {
     return this.userRepository.findOne({
       where: { email },
-      relations: ['userGameDetails', 'banks'],
+      relations: ['userGameDetails', 'banks', 'deposits'],
     });
   }
 
@@ -69,9 +69,17 @@ export class UsersService {
     return this.userRepository.save(updateUser);
   }
 
+  async updatePassword(id: number, newPassword: string): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) throw new Error('Usuario no encontrado');
+    user.password = newPassword;
+    return this.userRepository.save(user);
+  }
+
   async removeUser(id: number): Promise<User> {
     const user = await this.userRepository.findOne({ where: { id } });
     if (!user) throw new Error('User not found');
-    return this.userRepository.remove(user);
+    this.userRepository.remove(user);
+    return user;
   }
 }

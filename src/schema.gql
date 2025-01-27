@@ -31,9 +31,19 @@ type UserGame {
   user: User!
 }
 
+type UserDeposit {
+  id: Int!
+  deposit: String!
+  depositImage: String!
+  userId: Int!
+  rol: String!
+  user: User!
+}
+
 type User {
   id: Int!
   name: String!
+  avatar: String!
   email: String!
   password: String!
   phone: String!
@@ -42,6 +52,7 @@ type User {
   usdBalance: Float
   userGameDetails: [UserGame!]
   banks: [UserBank!]
+  deposits: [UserDeposit!]
 }
 
 type Bank {
@@ -87,6 +98,7 @@ type Query {
   userGameDetails(userId: Int!): [UserGame!]!
   userBanks: [UserBank!]!
   userBank(id: Int!): UserBank!
+  UsersDeposits: [UserDeposit!]!
 }
 
 type Mutation {
@@ -104,6 +116,8 @@ type Mutation {
   assingGameToUser(assingGameToUserInput: CreateUserGameInput!): UserGame!
   removeUserGame(userId: Int!, gameId: Int!): UserGame!
   assignBankToUser(assignBankToUser: CreateUserBankInput!): UserBank!
+  removeUserBank(userId: Int!, bankId: Int!): UserBank!
+  createUserDeposit(createUserDepositInput: CreateUserDepositInput!): UserDeposit!
 }
 
 input CreateGameInput {
@@ -113,6 +127,7 @@ input CreateGameInput {
 
 input CreateUserInput {
   name: String!
+  avatar: String
   email: String!
   password: String!
   phone: String
@@ -122,6 +137,7 @@ input CreateUserInput {
 
 input UpdateUserInput {
   name: String
+  avatar: String
   email: String
   password: String
   phone: String
@@ -180,4 +196,10 @@ input CreateUserBankInput {
   bankCode: String
   userDniBank: String
   binancePayId: String
+}
+
+input CreateUserDepositInput {
+  deposit: String!
+  depositImage: String!
+  userId: Int!
 }

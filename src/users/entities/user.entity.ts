@@ -4,6 +4,7 @@ import { UserBank } from 'src/user-banks/entities/user-bank.entity';
 import { UserGame } from 'src/user-games/entities/user-game.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Role } from '../enum/role';
+import { UserDeposit } from 'src/users-deposits/entities/user-deposit.entity';
 
 @Entity()
 @ObjectType()
@@ -16,6 +17,10 @@ export class User {
   @Field()
   name: string;
 
+  @Column({ nullable: true, default: '' })
+  @Field()
+  avatar?: string;
+
   @Column({ unique: true, nullable: false })
   @Field()
   email: string;
@@ -24,7 +29,7 @@ export class User {
   @Field()
   password: string;
 
-  @Column({ nullable: true, default: "" })
+  @Column({ nullable: true, default: '' })
   @Field()
   phone?: string;
 
@@ -50,4 +55,8 @@ export class User {
   @OneToMany(() => UserBank, (userBanks) => userBanks.user)
   @Field(() => [UserBank], { nullable: true })
   banks?: UserBank[];
+
+  @OneToMany(() => UserDeposit, (userDeposit) => userDeposit.user)
+  @Field(() => [UserDeposit], { nullable: true })
+  deposits?: UserDeposit[];
 }

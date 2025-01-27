@@ -17,9 +17,7 @@ export class UserBanksService {
     @InjectRepository(Bank) private bankRepository: Repository<Bank>,
   ) {}
 
-  async assignBankToUser(
-    assignGameInput: CreateUserBankInput,
-  ) {
+  async assignBankToUser(assignGameInput: CreateUserBankInput) {
     const {
       bankCode,
       binancePayId,
@@ -44,9 +42,9 @@ export class UserBanksService {
     const existingUserBank = await this.userBankRepository.findOne({
       where: { userId, bankId },
     });
-    
+
     if (existingUserBank) throw new Error('You already have the bank');
-    
+
     const newUserBank = this.userBankRepository.create({
       bankName: bank.name,
       userId: userId,
@@ -56,26 +54,34 @@ export class UserBanksService {
       userDniBank,
       userBankPhone,
     });
-    
+
     return this.userBankRepository.save(newUserBank);
   }
 
   findAll() {
-    return this.bankRepository.find({ relations: ['banks'] })
+    return this.bankRepository.find({ relations: ['banks'] });
   }
 
   findOne(id: number) {
     return this.bankRepository.findOne({
       where: { id },
-      relations: ['banks']
-    })
+      relations: ['banks'],
+    });
   }
 
   /* update(id: number, updateUserBankInput: UpdateUserBankInput) {
     return `This action updates a #${id} userBank`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} userBank`;
   } */
+
+  async removeUserBank(userId: number, bankId: number) {
+    const userBank = await this.userBankRepository.findOne({
+      where: { userId, bankId },
+    });
+    if (!userBank)
+      throw new Error(
+        `Bank with ID ${bankId} is not assigned to user with ID ${userId}`,
+      );
+    this.userBankRepository.remove(userBank);
+    return userBank;
+  }
 }
