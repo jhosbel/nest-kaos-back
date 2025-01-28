@@ -33,11 +33,14 @@ export class UserDepositService {
   }
 
   findAll() {
-    return this.userDepositRepository.find();
+    return this.userDepositRepository.find({ relations: ['user'] });
   }
 
   findOne(id: number) {
-    return this.userDepositRepository.findOne({ where: { id } });
+    return this.userDepositRepository.findOne({
+      where: { id },
+      relations: ['user'],
+    });
   }
 
   async updateUserRole(id: number, newRole: Role): Promise<UserDeposit> {

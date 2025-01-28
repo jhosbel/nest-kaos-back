@@ -7,5 +7,5 @@ export enum Role {
 }
 
 registerEnumType(Role, {
-  name: 'Role', // Este es el nombre que se usará en el esquema GraphQL
+  name: 'Role',
 });

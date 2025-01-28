@@ -120,7 +120,7 @@ type Mutation {
   assignBankToUser(assignBankToUser: CreateUserBankInput!): UserBank!
   removeUserBank(userId: Int!, bankId: Int!): UserBank!
   createUserDeposit(createUserDepositInput: CreateUserDepositInput!): UserDeposit!
-  updateUserDepositRole(id: Int!, newRole: Role!): UserDeposit!
+  updateUserDepositRole(id: Int!, newRole: String!): UserDeposit!
 }
 
 input CreateGameInput {
@@ -205,9 +205,4 @@ input CreateUserDepositInput {
   deposit: String!
   depositImage: String!
   userId: Int!
-}
-
-enum Role {
-  PENDING
-  FINISH
 }

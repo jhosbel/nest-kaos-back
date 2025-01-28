@@ -30,7 +30,7 @@ export class UserDepositResolver {
   @Mutation(() => UserDeposit)
   updateUserDepositRole(
     @Args('id', { type: () => Int }) id: number,
-    @Args('newRole', { type: () => Role }) newRole: Role,
+    @Args('newRole', { type: () => String }) newRole: Role,
   ) {
     return this.userDepositService.updateUserRole(id, newRole);
   }
