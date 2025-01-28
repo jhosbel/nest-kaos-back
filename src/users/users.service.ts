@@ -82,4 +82,22 @@ export class UsersService {
     this.userRepository.remove(user);
     return user;
   }
+
+  async convertCrdToUsd(id: number, amount: number): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new Error('User not found');
+    }
+    if (user.crdBalance < amount) {
+      throw new Error('Insufficient crdBalance');
+    }
+
+    const conversionRate = 1;
+    const convertedAmount = amount * conversionRate;
+
+    user.crdBalance -= amount;
+    user.usdBalance += convertedAmount;
+
+    return this.userRepository.save(user);
+  }
 }

@@ -5,6 +5,7 @@ import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDepositInput } from './dto/create-user-deposit.input';
 import { UserDeposit } from './entities/user-deposit.entity';
+import { Role } from './enum/role';
 
 @Injectable()
 export class UserDepositService {
@@ -32,6 +33,21 @@ export class UserDepositService {
   }
 
   findAll() {
-    return this.userDepositRepository.find()
+    return this.userDepositRepository.find();
+  }
+
+  findOne(id: number) {
+    return this.userDepositRepository.findOne({ where: { id } });
+  }
+
+  async updateUserRole(id: number, newRole: Role): Promise<UserDeposit> {
+    const userDeposit = await this.userDepositRepository.findOne({
+      where: { id },
+    });
+    if (!userDeposit) {
+      throw new Error('User not found');
+    }
+    userDeposit.rol = newRole;
+    return this.userDepositRepository.save(userDeposit);
   }
 }

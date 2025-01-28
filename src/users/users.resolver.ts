@@ -56,4 +56,12 @@ export class UsersResolver {
   removeUser(@Args('id', { type: () => Int }) id: number) {
     return this.usersService.removeUser(id);
   }
+
+  @Mutation(() => User)
+  convertCrdToUsd(
+    @Args('id', { type: () => Int }) id: number,
+    @Args('amount', { type: () => Int }) amount: number,
+  ) {
+    return this.usersService.convertCrdToUsd(id, amount);
+  }
 }
