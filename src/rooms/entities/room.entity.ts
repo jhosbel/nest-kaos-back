@@ -48,9 +48,9 @@ export class Room {
   @Field()
   date: string;
 
-  @Column('simple-array')
+  /* @Column('simple-array')
   @Field(() => [Int], { nullable: true })
-  usersId?: number[];
+  usersId?: number[]; */
 
   @Column({
     type: 'varchar',

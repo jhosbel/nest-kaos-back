@@ -6,33 +6,58 @@ import { Room } from './entities/room.entity';
 import { Repository } from 'typeorm';
 import { RoomStatus } from './enums/room-status.enum';
 import { UpdateUserStatsInput } from './dto/update-user-stats-room.input';
+import { User } from 'src/users/entities/user.entity';
+import { UserGame } from 'src/user-games/entities/user-game.entity';
+import { GraphQLError } from 'graphql';
 //import { UpdateRoomInput } from './dto/update-room.input';
 
 @Injectable()
 export class RoomsService {
   constructor(
     @InjectRepository(Room) private roomRepository: Repository<Room>,
+    @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(UserGame) private userGameRepository: Repository<UserGame>,
   ) {}
 
   createRoom(createRoomInput: CreateRoomInput): Promise<Room> {
     const newRoom = this.roomRepository.create(createRoomInput);
-    newRoom.usersId = [];
+    //newRoom.usersId = [];
     newRoom.userStats = [];
     newRoom.status = RoomStatus.STARTED;
     return this.roomRepository.save(newRoom);
   }
 
-  async addUserToRoom(roomId: number, userId: number) {
+  async addUserToRoom(roomId: number, userId: number, gameId: number) {
     const room = await this.roomRepository.findOne({ where: { id: roomId } });
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    const userGame = await this.userGameRepository.findOne({ where: { userId , gameId } });
     if (!room) {
       throw new Error('Room not found');
     }
 
-    if (room.usersId.includes(userId)) {
+    /* if (room.userStats.userId.includes(userId)) {
       throw new Error('User already in the room');
+    } */
+
+    if(!userGame) {
+      throw new GraphQLError('User not have the game');
     }
 
-    room.usersId.push(userId); // Agregar el usuario
+    console.log("Usuario back: ", user);
+    console.log("UsuarioGame back: ", userGame);
+
+
+    const newUserStats = {
+      userId: userId,
+      kills: 0,
+      position: 0,
+      timePlayed: '',
+      gameUserId: userGame.gameUserId,
+      nickname: userGame.nickname
+    };
+
+    room.userStats.push(newUserStats);
+    //room.usersId.push(userId);
     return this.roomRepository.save(room);
   }
 
@@ -91,7 +116,7 @@ export class RoomsService {
 
   async remove(id: number): Promise<Room> {
     const room = await this.roomRepository.findOne({ where: { id } });
-    if(!room) throw new Error('Room not found')
-      return this.roomRepository.remove(room)
+    if (!room) throw new Error('Room not found');
+    return this.roomRepository.remove(room);
   }
 }

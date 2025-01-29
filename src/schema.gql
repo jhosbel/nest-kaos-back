@@ -65,6 +65,8 @@ type UserStats {
   kills: Int
   timePlayed: String
   position: Int
+  gameUserId: String
+  nickname: String
 }
 
 type Room {
@@ -77,7 +79,6 @@ type Room {
   mode: String!
   time: String!
   date: String!
-  usersId: [Int!]
   status: String!
   userStats: [UserStats!]
 }
@@ -112,7 +113,7 @@ type Mutation {
   convertCrdToUsd(id: Int!, amount: Int!): User!
   createBank(createBankInput: CreateBankInput!): Bank!
   createRoom(createRoomInput: CreateRoomInput!): Room!
-  addUserToRoom(roomId: Int!, userId: Int!): Room!
+  addUserToRoom(roomId: Int!, userId: Int!, gameId: Int!): Room!
   updateRoomStatusToFinished(id: Int!): Room!
   updateUserStats(roomId: Int!, stats: [UpdateUserStatsInput!]!): Room!
   assingGameToUser(assingGameToUserInput: CreateUserGameInput!): UserGame!

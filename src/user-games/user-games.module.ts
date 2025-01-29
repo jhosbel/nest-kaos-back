@@ -10,5 +10,6 @@ import { Game } from 'src/games/entities/game.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([UserGame, User, Game])],
   providers: [UserGamesResolver, UserGamesService],
+  exports: [UserGamesService]
 })
 export class UserGamesModule {}

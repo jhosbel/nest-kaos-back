@@ -19,8 +19,9 @@ export class RoomsResolver {
   addUserToRoom(
     @Args('roomId', { type: () => Int }) roomId: number,
     @Args('userId', { type: () => Int }) userId: number,
+    @Args('gameId', { type: () => Int }) gameId: number,
   ) {
-    return this.roomsService.addUserToRoom(roomId, userId);
+    return this.roomsService.addUserToRoom(roomId, userId, gameId);
   }
 
   @Query(() => [Room], { name: 'rooms' })

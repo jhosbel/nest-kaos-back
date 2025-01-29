@@ -14,4 +14,10 @@ export class UserStats {
 
   @Field(() => Int, { nullable: true })
   position?: number;
+
+  @Field({ nullable: true })
+  gameUserId?: string;
+
+  @Field({ nullable: true })
+  nickname?: string;
 }
