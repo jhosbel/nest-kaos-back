@@ -7,11 +7,13 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { UserGame } from 'src/user-games/entities/user-game.entity';
 import { Role } from './enum/role';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
+    private cloudinaryService: CloudinaryService
   ) {}
 
   create(createUserInput: CreateUserInput): Promise<User> {
@@ -65,6 +67,12 @@ export class UsersService {
     if (!user) {
       throw new Error('User not found');
     }
+    // Si se proporciona un nuevo avatar, sube la imagen a Cloudinary
+    if (updateUserInput.avatar && updateUserInput.avatar.startsWith('data:image')) {
+      const avatarUrl = await this.cloudinaryService.uploadFile(updateUserInput.avatar);
+      updateUserInput.avatar = avatarUrl; // Guarda la URL pública en el input
+    }
+    // Actualiza los datos del usuario
     const updateUser = Object.assign(user, updateUserInput);
     return this.userRepository.save(updateUser);
   }

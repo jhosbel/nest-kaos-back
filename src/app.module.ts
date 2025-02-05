@@ -13,13 +13,16 @@ import { UserBanksModule } from './user-banks/user-banks.module';
 import { AuthModule } from './auth/auth.module';
 import { CreateUserGameInput } from './user-games/dto/create-user-game.input';
 import { UserDepositModule } from './users-deposits/user-deposit.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({isGlobal: true}),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-    }),
+    }), 
     TypeOrmModule.forRoot({
       type: 'sqlite',
       database: 'database.sqlite',
@@ -33,7 +36,8 @@ import { UserDepositModule } from './users-deposits/user-deposit.module';
     UserGamesModule,
     UserBanksModule,
     AuthModule,
-    UserDepositModule
+    UserDepositModule,
+    CloudinaryModule,
   ],
   controllers: [],
   providers: [CreateUserGameInput],

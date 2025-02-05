@@ -67,6 +67,7 @@ type UserStats {
   position: Int
   gameUserId: String
   nickname: String
+  crdBalance: Float
 }
 
 type Room {

@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateRoomInput } from './dto/create-room.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Room } from './entities/room.entity';
@@ -16,7 +16,8 @@ export class RoomsService {
   constructor(
     @InjectRepository(Room) private roomRepository: Repository<Room>,
     @InjectRepository(User) private userRepository: Repository<User>,
-    @InjectRepository(UserGame) private userGameRepository: Repository<UserGame>,
+    @InjectRepository(UserGame)
+    private userGameRepository: Repository<UserGame>,
   ) {}
 
   createRoom(createRoomInput: CreateRoomInput): Promise<Room> {
@@ -30,22 +31,21 @@ export class RoomsService {
   async addUserToRoom(roomId: number, userId: number, gameId: number) {
     const room = await this.roomRepository.findOne({ where: { id: roomId } });
     const user = await this.userRepository.findOne({ where: { id: userId } });
-    const userGame = await this.userGameRepository.findOne({ where: { userId , gameId } });
+    const userGame = await this.userGameRepository.findOne({
+      where: { userId, gameId },
+    });
     if (!room) {
-      throw new Error('Room not found');
+      throw new GraphQLError('Sala no encontrada.');
     }
 
-    /* if (room.userStats.userId.includes(userId)) {
-      throw new Error('User already in the room');
-    } */
-
-    if(!userGame) {
-      throw new GraphQLError('User not have the game');
+    const isUserInRoom = room.userStats.some((stats) => stats.userId === userId);
+    if (isUserInRoom) {
+      throw new GraphQLError('Ya ingresaste en la sala.');
     }
 
-    console.log("Usuario back: ", user);
-    console.log("UsuarioGame back: ", userGame);
-
+    if (!userGame) {
+      throw new GraphQLError('No tienes el juego agregado correspondiente a esta sala!.');
+    }
 
     const newUserStats = {
       userId: userId,
@@ -53,7 +53,8 @@ export class RoomsService {
       position: 0,
       timePlayed: '',
       gameUserId: userGame.gameUserId,
-      nickname: userGame.nickname
+      nickname: userGame.nickname,
+      crdBalance: user.crdBalance,
     };
 
     room.userStats.push(newUserStats);
@@ -72,11 +73,11 @@ export class RoomsService {
   async updateRoomStatusToFinished(roomId: number) {
     const room = await this.roomRepository.findOne({ where: { id: roomId } });
     if (!room) {
-      throw new NotFoundException('Room not found');
+      throw new GraphQLError('Sala no encontrada!.');
     }
 
     if (room.status === RoomStatus.FINISHED) {
-      throw new Error('Room is already finished');
+      throw new GraphQLError('Sala ya esta finalizada.');
     }
 
     room.status = RoomStatus.FINISHED;
@@ -87,7 +88,7 @@ export class RoomsService {
   async updateUserStats(roomId: number, stats: UpdateUserStatsInput[]) {
     const room = await this.roomRepository.findOne({ where: { id: roomId } });
     if (!room) {
-      throw new NotFoundException('Room not found');
+      throw new GraphQLError('Sala no encontrada!.');
     }
 
     if (!room.userStats) {
@@ -116,7 +117,7 @@ export class RoomsService {
 
   async remove(id: number): Promise<Room> {
     const room = await this.roomRepository.findOne({ where: { id } });
-    if (!room) throw new Error('Room not found');
+    if (!room) throw new GraphQLError('Sala no encontrada!.');
     return this.roomRepository.remove(room);
   }
 }

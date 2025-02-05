@@ -4,11 +4,13 @@ import { Game } from './entities/game.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateGameInput } from './dto/create-game.input';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class GamesService {
   constructor(
     @InjectRepository(Game) private gameRepository: Repository<Game>,
+    private cloudinaryService: CloudinaryService
   ) {}
 
   async create(game: CreateGameInput): Promise<Game> {
@@ -16,7 +18,11 @@ export class GamesService {
       where: { name: game.name },
     });
     if (existingGame) throw new Error('Juego ya existe');
-    const newGame = this.gameRepository.create(game);
+    let avatarUrl = game.avatar;
+    if (game.avatar && game.avatar.startsWith('data:image')) {
+      avatarUrl = await this.cloudinaryService.uploadFile(game.avatar); // Sube la imagen a Cloudinary
+    }
+    const newGame = this.gameRepository.create({ ...game, avatar: avatarUrl });
     return this.gameRepository.save(newGame);
   }
 

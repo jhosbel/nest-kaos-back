@@ -20,4 +20,7 @@ export class UserStats {
 
   @Field({ nullable: true })
   nickname?: string;
+
+  @Field({ nullable: true })
+  crdBalance?: number;
 }

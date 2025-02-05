@@ -6,12 +6,14 @@ import { Repository } from 'typeorm';
 import { CreateUserDepositInput } from './dto/create-user-deposit.input';
 import { UserDeposit } from './entities/user-deposit.entity';
 import { Role } from './enum/role';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class UserDepositService {
   constructor(
     @InjectRepository(UserDeposit)
     private userDepositRepository: Repository<UserDeposit>,
+    private cloudinaryService: CloudinaryService,
     @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
 
@@ -23,9 +25,14 @@ export class UserDepositService {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) throw new Error('User not found');
 
+    let imageUrl = depositImage;
+    if (depositImage && depositImage.startsWith('data:image')) {
+      imageUrl = await this.cloudinaryService.uploadFile(depositImage);
+    }
+
     const newUserDeposit = this.userDepositRepository.create({
       deposit,
-      depositImage,
+      depositImage: imageUrl,
       userId,
     });
 
