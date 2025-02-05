@@ -18,6 +18,7 @@ export class UsersResolver {
     return this.usersService.create(createUserInput);
   }
 
+  //@UseGuards(AuthGuard)
   @Query(() => [User], { name: 'users' })
   findAll() {
     return this.usersService.findAll();
