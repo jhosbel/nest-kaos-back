@@ -67,12 +67,10 @@ export class UsersService {
     if (!user) {
       throw new Error('User not found');
     }
-    // Si se proporciona un nuevo avatar, sube la imagen a Cloudinary
     if (updateUserInput.avatar && updateUserInput.avatar.startsWith('data:image')) {
       const avatarUrl = await this.cloudinaryService.uploadFile(updateUserInput.avatar);
-      updateUserInput.avatar = avatarUrl; // Guarda la URL pública en el input
+      updateUserInput.avatar = avatarUrl;
     }
-    // Actualiza los datos del usuario
     const updateUser = Object.assign(user, updateUserInput);
     return this.userRepository.save(updateUser);
   }
